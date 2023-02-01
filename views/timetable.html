@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>시간표짜기</title>
+        <link rel="shortcut icon" href="#">
+    </head>
+    <style>
+        .grid {
+            width: 185px;
+            height: 50px;
+            border: 1px solid black
+        }
+
+        .time {
+            width: 185px;
+            height: 50px;
+            border: 1px solid black
+        }
+
+    </style>
+
+    <script src="//code.jquery.com/jquery-latest.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#listupdate').click(function() {
+                $.ajax({
+                    url: '/timetable/update',
+                    method: 'GET'
+                }).done(function(data){
+                    if(data) {
+                        $('#updateresult').val = "업데이트가 완료되었습니다."
+                    }else{
+                        $('#updateresult').val = "업데이트를 실패하였습니다.."
+                    }
+                })
+            })
+        })
+    </script>
+    <body>
+        <div>
+            <form method="get" id="updateForm">
+                <button id="listupdate">Update</button>
+                <span id="updateresult"></span>
+            </form>
+        </div>
+        <div>
+            <form id="department">
+                <select name="dep">
+                    <option value="1">컴퓨터공학과</option>
+                    <option value="2">금융수학과</option>
+                </select>
+            </form>
+            <table id="timetb">
+                <thead>
+                    <tr>
+                        <th>강의리스트</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr></tr>
+                </tbody>
+            </table>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>
+                        <div class="times"><div class="time">오전 7시</div><div class="time">오전 8시</div><div class="time">오전 9시</div><div class="time">오전 10시</div><div class="time">오전 11시</div><div class="time">오후 12시</div><div class="time">오후 1시</div><div class="time">오후 2시</div><div class="time">오후 3시</div><div class="time">오후 4시</div><div class="time">오후 5시</div><div class="time">오후 6시</div></div>
+                    </th>
+                    <td>
+                        <div class="grids"><div class="grid"></div><div class="grid"></div><div class="grid"></div><div class="grid"></div><div class="grid"></div><div class="grid"></div><div class="grid"></div><div class="grid"></div><div class="grid"></div><div class="grid"></div><div class="grid"></div><div class="grid"></div></div>
+                    </td>
+                    <td>
+                        <div class="grids"><div class="grid"></div><div class="grid"></div><div class="grid"></div><div class="grid"></div><div class="grid"></div><div class="grid"></div><div class="grid"></div><div class="grid"></div><div class="grid"></div><div class="grid"></div><div class="grid"></div><div class="grid"></div></div>
+                    </td>
+                    <td>
+                        <div class="grids"><div class="grid"></div><div class="grid"></div><div class="grid"></div><div class="grid"></div><div class="grid"></div><div class="grid"></div><div class="grid"></div><div class="grid"></div><div class="grid"></div><div class="grid"></div><div class="grid"></div><div class="grid"></div></div>
+                    </td>
+                    <td>
+                        <div class="grids"><div class="grid"></div><div class="grid"></div><div class="grid"></div><div class="grid"></div><div class="grid"></div><div class="grid"></div><div class="grid"></div><div class="grid"></div><div class="grid"></div><div class="grid"></div><div class="grid"></div><div class="grid"></div></div>
+                    </td>
+                    <td>
+                        <div class="grids"><div class="grid"></div><div class="grid"></div><div class="grid"></div><div class="grid"></div><div class="grid"></div><div class="grid"></div><div class="grid"></div><div class="grid"></div><div class="grid"></div><div class="grid"></div><div class="grid"></div><div class="grid"></div></div>
+                    </td>
+                </tr>
+            </thead>
+            <tbody>
+        
+            </tbody>
+        </table>
+    </body>
+</html>

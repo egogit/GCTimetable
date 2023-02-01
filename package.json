@@ -1,0 +1,25 @@
+{
+  "dependencies": {
+    "axios": "^1.2.6",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "morgan": "^1.10.0",
+    "mysql2": "^3.0.1",
+    "nunjucks": "^3.2.3",
+    "request": "^2.88.2",
+    "sequelize": "^6.28.0",
+    "sequelize-cli": "^6.6.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.20"
+  },
+  "name": "timetable",
+  "version": "1.0.0",
+  "description": "gachon timetable",
+  "main": "app.js",
+  "scripts": {
+    "start": "nodemon app"
+  },
+  "author": "egogit",
+  "license": "ISC"
+}
