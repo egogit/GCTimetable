@@ -6,82 +6,240 @@
         <link rel="shortcut icon" href="#">
     </head>
     <style>
-        .grid {
+        /* TODO. CSS 분리 - 일반적인 방법 사용시 GET요청으로 가는 문제 발생 */
+        .grid, .time {
             width: 185px;
             height: 50px;
-            border: 1px solid black
+            border: 1px solid black;
+            border-collapse: collapse;
         }
 
-        .time {
-            width: 185px;
-            height: 50px;
-            border: 1px solid black
+        .timetb {
+            border: 1px solid black;
+            border-collapse: collapse;
         }
+
+        .lectHead, .lectList, .no, .classno, .classname, .type, .credit, .lecturer, .lecttime, .classroom, .peoplecnt, .isCyber  {
+            border: 1px solid black;
+            border-collapse: collapse;
+        }
+
+        .lectHead, .lectList {
+            width: 100%;
+        }
+
+        .lectDiv {
+            width: 100%;
+            height: 360px;
+            overflow-y: scroll;
+
+            -ms-overflow-style: none; /* 인터넷 익스플로러 */
+            scrollbar-width: none; /* 파이어폭스 */
+        }
+
+        .lectDiv::-webkit-scrollbar {
+            display: none; /* 크롬, 사파리, 오페라, 엣지 */
+        }
+        
+        .no {
+            width: 4%;
+        }
+
+        .classno {
+            width: 10%;
+        }
+
+        .classname {
+            width: 19%;
+        }
+
+        .type {
+            width: 6%;
+        }
+
+        .credit {
+            width: 6%;
+        }
+
+        .lecturer {
+            width: 11.5%;
+        }
+
+        .lecttime {
+            width: 12%;
+        }
+
+        .classroom {
+            width: 14%;
+        }
+
+        .peoplecnt {
+            width: 6%;
+        }
+
+        .isCyber {
+            width: 11.5%;
+        }
+
 
     </style>
 
-    <script src="//code.jquery.com/jquery-latest.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.3.js" integrity="sha256-nQLuAZGRRcILA+6dMBOvcRh5Pe310sBpanc6+QBmyVM=" crossorigin="anonymous"></script>
     <script>
+
         $(document).ready(function() {
-            $('#listupdate').click(function() {
+            document.getElementById("listupdate").addEventListener('click', () => {
                 $.ajax({
                     url: '/timetable/update',
                     method: 'GET'
-                }).done(function(data){
-                    if(data) {
-                        $('#updateresult').val = "업데이트가 완료되었습니다."
-                    }else{
-                        $('#updateresult').val = "업데이트를 실패하였습니다.."
-                    }
+                })
+                .done(() => {
+                    $('#updateresult').text("업데이트가 완료되었습니다.")
+                })
+                .fail((xhr, status, err) => {
+                    $('#updateresult').text("업데이트를 실패하였습니다.")
+                })
+                .always((xhr, status) => {
+                    alert("처리되었습니다.");
                 })
             })
-        })
+
+            document.getElementById("dept").addEventListener('change', () => {
+                const deptCd = $('#dept').val();
+
+                $.ajax({
+                    url: '/timetable/class',
+                    data: { "code": deptCd },
+                    method: 'GET'
+                })
+                .done((json) => {
+                    const lectList = document.getElementsByClassName("lectBody");
+                    lectList[0].replaceChildren();
+
+                    leclist = JSON.parse(json);
+                    $('#deptresult').text("강의를 불러왔습니다.");
+                    for (let i = 0 ; i < leclist.length; i++){
+                        const tr = document.createElement('tr');
+                        const no = document.createElement('td');
+                        const classno = document.createElement('td');
+                        const classname = document.createElement('td');
+                        const type = document.createElement('td');
+                        const credit = document.createElement('td');
+                        const lecturer = document.createElement('td');
+                        const lecttime = document.createElement('td');
+                        const classroom = document.createElement('td');
+                        const peoplecnt = document.createElement('td');
+                        const isCyber = document.createElement('td');
+                        
+                        tr.setAttribute('class','lectrow');
+                        no.setAttribute('class', 'no');
+                        classno.setAttribute('class', 'classno');
+                        classname.setAttribute('class', 'classname');
+                        type.setAttribute('class', 'type');
+                        credit.setAttribute('class', 'credit');
+                        lecturer.setAttribute('class', 'lecturer');
+                        lecttime.setAttribute('class', 'lecttime');
+                        classroom.setAttribute('class', 'classroom');
+                        peoplecnt.setAttribute('class', 'peoplecnt');
+                        isCyber.setAttribute('class', 'isCyber');
+
+                        no.textContent = i + 1;
+                        classno.textContent = leclist[i]["HAKSU_NO"];
+                        classname.textContent = leclist[i]["SUBJECT_NM_KOR"];
+                        type.textContent = leclist[i]["ISU_NM"];
+                        credit.textContent = leclist[i]["SISU"];
+                        lecturer.textContent = leclist[i]["PROFNM"];
+                        lecttime.textContent = leclist[i]["TIME"];
+                        classroom.textContent = leclist[i]["LOC_NM"];
+                        peoplecnt.textContent = leclist[i]["APP_PEOPLE"];
+                        isCyber.textContent = leclist[i]["CYBER_YN"];
+
+                        tr.append(no);
+                        tr.append(classno);
+                        tr.append(classname);
+                        tr.append(type);
+                        tr.append(credit);
+                        tr.append(lecturer);
+                        tr.append(lecttime);
+                        tr.append(classroom);
+                        tr.append(peoplecnt);
+                        tr.append(isCyber);
+                    
+                        $(".lectBody").append(tr);
+                    }
+                })
+                .fail((xhr, status, err) => {
+                    $('#deptresult').text("강의를 가져오는데 실패하였습니다.");
+                })
+                .always((xhr, status) => {
+                    alert("처리되었습니다.");
+                })
+            })
+        });
+
     </script>
     <body>
         <div>
-            <form method="get" id="updateForm">
-                <button id="listupdate">Update</button>
-                <span id="updateresult"></span>
-            </form>
+            <button id="listupdate">Update</button>
+            <span id="updateresult"></span>
         </div>
         <div>
             <form id="department">
-                <select name="dep">
-                    <option value="1">컴퓨터공학과</option>
-                    <option value="2">금융수학과</option>
+                <select name="dep" id="dept">
+                    <option value="0"></option>
+                    <option value="CE">컴퓨터공학과</option>
+                    <option value="FM">금융수학과</option>
                 </select>
+                <span id="deptresult"></span>
             </form>
-            <table id="timetb">
+            <div>
+
+            </div>
+            <table class="lectHead">
+                <caption>강의 리스트</caption>
                 <thead>
                     <tr>
-                        <th>강의리스트</th>
+                        <th class="no">No</th>
+                        <th class="classno">학수번호</th>
+                        <th class="classname">교과목명</th>
+                        <th class="type">이수</th>
+                        <th class="credit">학점</th>
+                        <th class="lecturer">담당교수</th>
+                        <th class="lecttime">강의시간</th>
+                        <th class="classroom">강의실</th>
+                        <th class="peoplecnt">정원</th>
+                        <th class="isCyber">Cyber 강좌여부</th>
                     </tr>
                 </thead>
-                <tbody>
-                    <tr></tr>
-                </tbody>
             </table>
+            <div class="lectDiv">
+                <table class="lectList">
+                    <tbody class="lectBody">
+                        
+                    </tbody>
+                </table>
+            </div>
         </div>
-        <table>
+        <table class="tiemtb">
             <thead>
                 <tr>
                     <th>
-                        <div class="times"><div class="time">오전 7시</div><div class="time">오전 8시</div><div class="time">오전 9시</div><div class="time">오전 10시</div><div class="time">오전 11시</div><div class="time">오후 12시</div><div class="time">오후 1시</div><div class="time">오후 2시</div><div class="time">오후 3시</div><div class="time">오후 4시</div><div class="time">오후 5시</div><div class="time">오후 6시</div></div>
+                        <div class="times"><div class="time">오전 9시</div><div class="time">오전 10시</div><div class="time">오전 11시</div><div class="time">오후 12시</div><div class="time">오후 1시</div><div class="time">오후 2시</div><div class="time">오후 3시</div><div class="time">오후 4시</div><div class="time">오후 5시</div><div class="time">오후 6시</div></div>
                     </th>
                     <td>
-                        <div class="grids"><div class="grid"></div><div class="grid"></div><div class="grid"></div><div class="grid"></div><div class="grid"></div><div class="grid"></div><div class="grid"></div><div class="grid"></div><div class="grid"></div><div class="grid"></div><div class="grid"></div><div class="grid"></div></div>
+                        <div class="grids"><div class="grid"></div><div class="grid"></div><div class="grid"></div><div class="grid"></div><div class="grid"></div><div class="grid"></div><div class="grid"></div><div class="grid"></div><div class="grid"></div><div class="grid"></div></div>
                     </td>
                     <td>
-                        <div class="grids"><div class="grid"></div><div class="grid"></div><div class="grid"></div><div class="grid"></div><div class="grid"></div><div class="grid"></div><div class="grid"></div><div class="grid"></div><div class="grid"></div><div class="grid"></div><div class="grid"></div><div class="grid"></div></div>
+                        <div class="grids"><div class="grid"></div><div class="grid"></div><div class="grid"></div><div class="grid"></div><div class="grid"></div><div class="grid"></div><div class="grid"></div><div class="grid"></div><div class="grid"></div><div class="grid"></div></div>
                     </td>
                     <td>
-                        <div class="grids"><div class="grid"></div><div class="grid"></div><div class="grid"></div><div class="grid"></div><div class="grid"></div><div class="grid"></div><div class="grid"></div><div class="grid"></div><div class="grid"></div><div class="grid"></div><div class="grid"></div><div class="grid"></div></div>
+                        <div class="grids"><div class="grid"></div><div class="grid"></div><div class="grid"></div><div class="grid"></div><div class="grid"></div><div class="grid"></div><div class="grid"></div><div class="grid"></div><div class="grid"></div><div class="grid"></div></div>
                     </td>
                     <td>
-                        <div class="grids"><div class="grid"></div><div class="grid"></div><div class="grid"></div><div class="grid"></div><div class="grid"></div><div class="grid"></div><div class="grid"></div><div class="grid"></div><div class="grid"></div><div class="grid"></div><div class="grid"></div><div class="grid"></div></div>
+                        <div class="grids"><div class="grid"></div><div class="grid"></div><div class="grid"></div><div class="grid"></div><div class="grid"></div><div class="grid"></div><div class="grid"></div><div class="grid"></div><div class="grid"></div><div class="grid"></div></div>
                     </td>
                     <td>
-                        <div class="grids"><div class="grid"></div><div class="grid"></div><div class="grid"></div><div class="grid"></div><div class="grid"></div><div class="grid"></div><div class="grid"></div><div class="grid"></div><div class="grid"></div><div class="grid"></div><div class="grid"></div><div class="grid"></div></div>
+                        <div class="grids"><div class="grid"></div><div class="grid"></div><div class="grid"></div><div class="grid"></div><div class="grid"></div><div class="grid"></div><div class="grid"></div><div class="grid"></div><div class="grid"></div><div class="grid"></div></div>
                     </td>
                 </tr>
             </thead>
